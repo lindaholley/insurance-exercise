@@ -27,27 +27,13 @@ class PlaidService
         }
     }
 
-    suspend fun getPublicToken(): String {
-
-        log.info("getPublicToken()")
-
-        try {
-            val response = client.post<PlaidTokenResponse> {
-                url("https://sandbox.plaid.com/sandbox/public_token/create")
-                contentType(ContentType.Application.Json)
-                body = PlaidAuth(institution_id = plaidConfig.institutionId,
-                        initial_products = mutableListOf("auth"),
-                        public_key = plaidConfig.publicKey,
-                        options = PlaidAuth.PlaidCredential(plaidConfig.username, plaidConfig.password))
-            }
-
-            log.info("response from public_token endpoint: $response")
-
-            return response.public_token
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return "bad token2"
-        }
+    suspend fun getPublicToken(): PlaidTokenResponse = client.post<PlaidTokenResponse> {
+        url("https://sandbox.plaid.com/sandbox/public_token/create")
+        contentType(ContentType.Application.Json)
+        body = PlaidAuth(institution_id = plaidConfig.institutionId,
+                initial_products = mutableListOf("auth"),
+                public_key = plaidConfig.publicKey,
+                options = PlaidAuth.PlaidCredential(plaidConfig.username, plaidConfig.password))
     }
 
 }
