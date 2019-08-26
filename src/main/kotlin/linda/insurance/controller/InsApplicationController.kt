@@ -1,6 +1,5 @@
 package linda.insurance.controller
 
-import kotlinx.coroutines.runBlocking
 import linda.insurance.model.CustomerCredential
 import linda.insurance.model.plaid.PlaidWebhookRequest
 import linda.insurance.service.InsApplicationService
@@ -16,14 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class InsApplicationController
-@Autowired constructor(@Qualifier("insApplicationServiceImpl") private val insApplicationService: InsApplicationService) {
+class InsApplicationController @Autowired constructor(
+        @Qualifier("insApplicationServiceImpl") private val insApplicationService: InsApplicationService) {
 
     private val log = LoggerFactory.getLogger(InsApplicationController::class.java)
 
     @PostMapping("/create")
     @ResponseBody
-    fun createApplication(@RequestBody customerCredential: CustomerCredential) = runBlocking {
+    suspend fun createApplication(@RequestBody customerCredential: CustomerCredential) {
 
         // TODO: validate customer credential
         val customerId = generateCustomerId()
@@ -42,11 +41,6 @@ class InsApplicationController
             }
             WEBHOOK_VERIFIED -> {
                 insApplicationService.accountVerified(webhookRequest.itemId, webhookRequest.accountId)
-
-                // check account balance
-                insApplicationService.checkBalance(webhookRequest.itemId, webhookRequest.accountId)
-
-                // verify with bigbrother.com
             }
             else -> {
                 log.warn("webhook fired unknown code")

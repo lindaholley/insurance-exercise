@@ -20,12 +20,20 @@ class InsApplicationServiceImpl
         customerDao.saveCustomer(customerId, accessTokenResponse)
     }
 
-    override fun accountVerified(itemId: String, accountId: String) {
+    override suspend fun accountVerified(itemId: String, accountId: String) {
 
-        customerDao.accountVerified(itemId, accountId)
+        updateAccountVerified(itemId, accountId)
+
+        // check account balance
+        val enoughBalance = checkBalance(itemId, accountId)
+
+        if (enoughBalance) {
+            updateAccountAvailable(itemId)
+        }
+        // verify with bigbrother.com
     }
 
-    override suspend fun checkBalance(itemId: String, accountId: String?): Boolean {
+    private suspend fun checkBalance(itemId: String, accountId: String?): Boolean {
 
         // get access token
         val accessToken = customerDao.getAccessToken(itemId)
@@ -39,5 +47,13 @@ class InsApplicationServiceImpl
             return available > getPremium(PolicyTypes.TEN_YEAR.ordinal)
         }
         return false
+    }
+
+    private fun updateAccountVerified(itemId: String, accountId: String) {
+        customerDao.accountVerified(itemId, accountId)
+    }
+
+    private fun updateAccountAvailable(itemId: String) {
+        customerDao.accountAvailable(itemId)
     }
 }

@@ -9,5 +9,7 @@ interface CustomerDao {
 
     fun accountVerified(itemId: String, accountId: String?)
 
+    fun accountAvailable(itemId: String)
+
     fun getAccessToken(itemId: String): String?
 }

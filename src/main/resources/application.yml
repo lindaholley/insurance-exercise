@@ -7,4 +7,6 @@ plaid:
   username: "user_good"
   password: "pass_good"
 
+bigbrother:
+  host: localhost:8081
 

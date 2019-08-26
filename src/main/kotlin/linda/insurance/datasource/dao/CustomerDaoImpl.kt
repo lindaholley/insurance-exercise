@@ -52,6 +52,12 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
         customerStatus.status = ApplicationStatus.VERIFIED.ordinal
     }
 
+    override fun accountAvailable(itemId: String) {
+        val customerItem = customerItemsRepo.findByItemId(itemId)
+        customerItem?.itemStatus = PlaidItemStatus.AVAILABLE.ordinal
+        customerItemsRepo.save(customerItem)
+    }
+
     override fun getAccessToken(itemId: String): String? {
         val customerItem = customerItemsRepo.findByItemId(itemId)
         return customerItem?.accessToken
