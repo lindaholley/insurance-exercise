@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Configuration
 class PlaidConfig {
 
     lateinit var institutionId: String
+    lateinit var clientId: String
     lateinit var publicKey: String
+    lateinit var secret: String
     lateinit var username: String
     lateinit var password: String
 }

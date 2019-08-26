@@ -1,6 +1,6 @@
-package linda.insurance.model
+package linda.insurance.model.plaid
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class PlaidTokenResponse(val public_token: String)
+data class PlaidPublicTokenResponse(val public_token: String)
