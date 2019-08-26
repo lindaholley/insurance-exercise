@@ -1,13 +1,16 @@
 package linda.insurance.model.plaid
 
-data class PlaidWebhookRequest(val webhookType: String,
-                               val webhookCode: String,
-                               val itemId: String,
-                               val accountId: String,
-                               val error: PlaidErrorPayload) {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
-    data class PlaidErrorPayload(val displayMessage: String,
-                                 val errorCode: String,
-                                 val errorMessage: String,
-                                 val errorType: String)
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class PlaidWebhookRequest(val webhook_type: String,
+                               val webhook_code: String,
+                               val item_id: String,
+                               val account_id: String,
+                               val error: PlaidErrorPayload? = null) {
+
+    data class PlaidErrorPayload(val display_message: String,
+                                 val error_code: String,
+                                 val error_message: String,
+                                 val error_type: String)
 }

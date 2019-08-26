@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface CustomerStatusRepository: CrudRepository<CustomerStatus, Int> {
 
-    fun findByCustomerId(customerId: Int): CustomerStatus
+    fun findByCustomerId(customerId: Int): CustomerStatus?
 }

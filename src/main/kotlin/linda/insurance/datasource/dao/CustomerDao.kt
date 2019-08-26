@@ -1,5 +1,6 @@
 package linda.insurance.datasource.dao
 
+import linda.insurance.model.customer.CustomerStatus
 import linda.insurance.model.plaid.PlaidAccessTokenResponse
 
 interface CustomerDao {
@@ -12,4 +13,6 @@ interface CustomerDao {
     fun accountAvailable(itemId: String)
 
     fun getAccessToken(itemId: String): String?
+
+    fun getCustomerById(customerId: Int): CustomerStatus?
 }

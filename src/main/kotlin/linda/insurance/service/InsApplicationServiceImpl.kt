@@ -1,20 +1,31 @@
 package linda.insurance.service
 
+import linda.insurance.api.BigBrotherService
 import linda.insurance.api.PlaidService
 import linda.insurance.datasource.dao.CustomerDao
+import linda.insurance.model.customer.CustomerStatus
 import linda.insurance.model.enums.PolicyTypes
 import linda.insurance.util.getPremium
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class InsApplicationServiceImpl
     @Autowired constructor(private val plaidService: PlaidService,
+                           private val bigBrotherService: BigBrotherService,
                            private val customerDao: CustomerDao): InsApplicationService {
+
+    private val log = LoggerFactory.getLogger(InsApplicationServiceImpl::class.java)
 
     override suspend fun create(customerId: Int) {
         val publicTokenResponse = plaidService.getPublicToken()
+
+        log.info("create() got public_token: $publicTokenResponse")
+
         val accessTokenResponse = plaidService.getAccessToken(publicTokenResponse.public_token)
+
+        log.info("create() got access_token: $accessTokenResponse")
 
         // store item
         customerDao.saveCustomer(customerId, accessTokenResponse)
@@ -30,7 +41,27 @@ class InsApplicationServiceImpl
         if (enoughBalance) {
             updateAccountAvailable(itemId)
         }
+
         // verify with bigbrother.com
+
+        // TODO: stubbed with fake value for now
+        val isClean = bigBrotherService.verifyClean("lastname", "firstname", "city")
+
+        if (isClean) {
+            // update application status
+            log.info("applicant is clean")
+        } else {
+            log.info("applicant has criminal record")
+        }
+
+    }
+
+    override fun getCustomer(customerId: Int): CustomerStatus? {
+        val customerStatus = customerDao.getCustomerById(customerId)
+
+        // TODO: add item status as well
+
+        return customerStatus
     }
 
     private suspend fun checkBalance(itemId: String, accountId: String?): Boolean {
