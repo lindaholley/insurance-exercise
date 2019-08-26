@@ -1,5 +1,6 @@
 package linda.insurance.api
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
@@ -30,6 +31,7 @@ class PlaidService
         install(JsonFeature) {
             serializer = JacksonSerializer {
                 this.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+                this.setSerializationInclusion(JsonInclude.Include.NON_NULL)
             }
         }
     }
@@ -52,7 +54,7 @@ class PlaidService
     }
 
     suspend fun getBalance(accessToken: String, accountId: String?): PlaidBalanceResponse = client.post<PlaidBalanceResponse> {
-        url("https://sandbox.plaid.com/account/balance/get")
+        url("https://sandbox.plaid.com/accounts/balance/get")
         contentType(ContentType.Application.Json)
         body = PlaidBalanceRequest(clientId = plaidConfig.clientId, secret = plaidConfig.secret, accessToken = accessToken)
     }
