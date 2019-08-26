@@ -7,5 +7,5 @@ interface CustomerItemsRepository: CrudRepository<CustomerItem, Int> {
 
     fun findByItemId(itemId: String): CustomerItem?
 
-    fun findByCustomerId(customerId: Int): List<CustomerItem>
+    fun findByCustomerId(customerId: Int): CustomerItem?
 }

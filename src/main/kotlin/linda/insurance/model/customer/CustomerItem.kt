@@ -7,7 +7,7 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 
-@Table(name = "customer_items")
+@Table(name = "customer_item")
 @Entity
 data class CustomerItem(
 

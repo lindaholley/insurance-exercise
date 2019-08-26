@@ -2,6 +2,7 @@ package linda.insurance.controller
 
 import kotlinx.coroutines.runBlocking
 import linda.insurance.model.CustomerCredential
+import linda.insurance.model.customer.CustomerInfo
 import linda.insurance.model.customer.CustomerStatus
 import linda.insurance.model.plaid.PlaidWebhookRequest
 import linda.insurance.service.InsApplicationService
@@ -59,14 +60,14 @@ class InsApplicationController @Autowired constructor(
      * For debugging purpose
      */
     @GetMapping("/customer/{customerId}")
-    fun getCustomer(@PathVariable customerId: Int): ResponseEntity<CustomerStatus> {
+    fun getCustomer(@PathVariable customerId: Int): ResponseEntity<CustomerInfo> {
 
-        val customerStatus = insApplicationService.getCustomer(customerId)
-        return if (customerStatus != null) {
-            ResponseEntity.ok(customerStatus)
+        val customerInfo = insApplicationService.getCustomer(customerId)
+        return if (customerInfo != null) {
+            ResponseEntity.ok(customerInfo)
         }
         else {
-            ResponseEntity.notFound().build<CustomerStatus>()
+            ResponseEntity.notFound().build<CustomerInfo>()
         }
     }
 }

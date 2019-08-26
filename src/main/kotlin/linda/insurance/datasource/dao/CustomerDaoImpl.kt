@@ -19,11 +19,17 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
     override fun saveCustomer(customerId: Int,
                               accessTokenResponse: PlaidAccessTokenResponse) {
-        customerStatusRepo.save(CustomerStatus(customerId = customerId, status = ApplicationStatus.READY.ordinal))
-        customerItemsRepo.save(CustomerItem(customerId = customerId,
+        val savedCustomerStatus = customerStatusRepo.save(CustomerStatus(customerId = customerId,
+                status = ApplicationStatus.READY.ordinal))
+
+        log.info("saved customer status: $savedCustomerStatus")
+
+        val savedCustomerItem = customerItemsRepo.save(CustomerItem(customerId = customerId,
                 itemId = accessTokenResponse.itemId,
                 accessToken = accessTokenResponse.accessToken,
                 itemStatus = PlaidItemStatus.UNVERIFIED.ordinal))
+
+        log.info("saved customer item: $savedCustomerItem")
     }
 
     override fun accountVerified(itemId: String, accountId: String?) {
@@ -32,7 +38,7 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
         val customerItem = customerItemsRepo.findByItemId(itemId)
 
         if (customerItem == null) {
-            log.warn("updating non-existent item")
+            log.warn("updating non-existent item $itemId")
             return
         }
 
@@ -71,5 +77,9 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
     override fun getCustomerById(customerId: Int): CustomerStatus? {
         return customerStatusRepo.findByCustomerId(customerId)
+    }
+
+    override fun getItemByCustomerId(customerId: Int): CustomerItem? {
+        return customerItemsRepo.findByCustomerId(customerId)
     }
 }

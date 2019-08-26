@@ -3,7 +3,7 @@ package linda.insurance.service
 import linda.insurance.api.BigBrotherService
 import linda.insurance.api.PlaidService
 import linda.insurance.datasource.dao.CustomerDao
-import linda.insurance.model.customer.CustomerStatus
+import linda.insurance.model.customer.CustomerInfo
 import linda.insurance.model.enums.PolicyTypes
 import linda.insurance.util.getPremium
 import org.slf4j.LoggerFactory
@@ -56,12 +56,19 @@ class InsApplicationServiceImpl
 
     }
 
-    override fun getCustomer(customerId: Int): CustomerStatus? {
+    override fun getCustomer(customerId: Int): CustomerInfo? {
         val customerStatus = customerDao.getCustomerById(customerId)
+        val customerItem = customerDao.getItemByCustomerId(customerId)
 
-        // TODO: add item status as well
+        if (customerStatus == null || customerItem == null) {
+            return null
+        }
 
-        return customerStatus
+        return CustomerInfo(customerId = customerId,
+                customerStatus = customerStatus.status,
+                itemId = customerItem.itemId,
+                accountId = customerItem.accountId,
+                itemStatus = customerItem.itemStatus)
     }
 
     private suspend fun checkBalance(itemId: String, accountId: String?): Boolean {
