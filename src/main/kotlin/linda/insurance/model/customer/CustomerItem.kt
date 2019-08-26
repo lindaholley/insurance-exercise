@@ -9,7 +9,7 @@ import javax.persistence.Table
 
 @Table(name = "customer_items")
 @Entity
-data class CustomerItems(
+data class CustomerItem(
 
         @GeneratedValue(strategy = GenerationType.AUTO)
         @Id
@@ -25,6 +25,9 @@ data class CustomerItems(
         @Column(name = "access_token", nullable = false)
         val accessToken: String,
 
+        @Column(name = "account_id")
+        var accountId: String? = null,
+
         @Column(name = "item_status", nullable = false)
-        val itemStatus: Int
+        var itemStatus: Int
 )
