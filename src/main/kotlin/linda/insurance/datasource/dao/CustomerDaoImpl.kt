@@ -2,6 +2,7 @@ package linda.insurance.datasource.dao
 
 import linda.insurance.datasource.repository.CustomerItemsRepository
 import linda.insurance.datasource.repository.CustomerStatusRepository
+import linda.insurance.model.CustomerCredential
 import linda.insurance.model.customer.CustomerItem
 import linda.insurance.model.customer.CustomerStatus
 import linda.insurance.model.enums.ApplicationStatus
@@ -17,10 +18,14 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
     private val log = LoggerFactory.getLogger(CustomerDaoImpl::class.java)
 
-    override fun saveCustomer(customerId: Int,
+    override fun saveCustomer(customerCredential: CustomerCredential,
+                              customerId: Int,
                               accessTokenResponse: PlaidAccessTokenResponse) {
         val savedCustomerStatus = customerStatusRepo.save(CustomerStatus(customerId = customerId,
-                status = ApplicationStatus.READY.ordinal))
+                status = ApplicationStatus.READY.ordinal,
+                lastName = customerCredential.lastName,
+                firstName = customerCredential.firstName,
+                city = customerCredential.city))
 
         log.info("saved customer status: $savedCustomerStatus")
 
@@ -81,5 +86,9 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
     override fun getItemByCustomerId(customerId: Int): CustomerItem? {
         return customerItemsRepo.findByCustomerId(customerId)
+    }
+
+    override fun getCustomerByItemId(itemId: String): CustomerItem? {
+        return customerItemsRepo.findByItemId(itemId)
     }
 }

@@ -28,12 +28,15 @@ class InsApplicationController @Autowired constructor(
     @PostMapping("/create")
     fun createApplication(@RequestBody customerCredential: CustomerCredential) = runBlocking {
 
-        // TODO: validate customer credential
+        // validate customer credential
+        require(customerCredential.firstName.isNotBlank())  { "createApplication(): first name is empty" }
+        require(customerCredential.lastName.isNotBlank())  { "createApplication(): last name is empty" }
+
         val customerId = generateCustomerId()
 
         log.info("createApplication customerId $customerId")
 
-        insApplicationService.create(customerId)
+        insApplicationService.create(customerCredential, customerId)
 
         log.info("account for $customerId created")
     }

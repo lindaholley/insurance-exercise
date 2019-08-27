@@ -15,6 +15,7 @@ data class PlaidPublicTokenRequest(var institutionId: String,
                                    var initialProducts: MutableList<String>,
                                    var options: PlaidCredential) {
 
-    data class PlaidCredential(var overrideUsername: String,
+    data class PlaidCredential(var webhook: String? = null,
+                               var overrideUsername: String,
                                var overridePassword: String)
 }

@@ -42,7 +42,7 @@ class PlaidService
         body = PlaidPublicTokenRequest(institutionId = plaidConfig.institutionId,
                 initialProducts = mutableListOf("auth"),
                 publicKey = plaidConfig.publicKey,
-                options = PlaidPublicTokenRequest.PlaidCredential(plaidConfig.username, plaidConfig.password))
+                options = PlaidPublicTokenRequest.PlaidCredential("http://localhost:8080/update", plaidConfig.username, plaidConfig.password))
     }
 
     suspend fun getAccessToken(publicToken: String): PlaidAccessTokenResponse = client.post<PlaidAccessTokenResponse> {

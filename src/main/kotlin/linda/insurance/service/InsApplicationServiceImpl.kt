@@ -3,7 +3,9 @@ package linda.insurance.service
 import linda.insurance.api.BigBrotherService
 import linda.insurance.api.PlaidService
 import linda.insurance.datasource.dao.CustomerDao
+import linda.insurance.model.CustomerCredential
 import linda.insurance.model.customer.CustomerInfo
+import linda.insurance.model.customer.CustomerStatus
 import linda.insurance.model.enums.PolicyTypes
 import linda.insurance.util.getPremium
 import org.slf4j.LoggerFactory
@@ -18,7 +20,8 @@ class InsApplicationServiceImpl
 
     private val log = LoggerFactory.getLogger(InsApplicationServiceImpl::class.java)
 
-    override suspend fun create(customerId: Int) {
+    override suspend fun create(customerCredential: CustomerCredential,
+                                customerId: Int) {
         val publicTokenResponse = plaidService.getPublicToken()
 
         log.info("create() got public_token: $publicTokenResponse")
@@ -28,7 +31,7 @@ class InsApplicationServiceImpl
         log.info("create() got access_token: $accessTokenResponse")
 
         // store item
-        customerDao.saveCustomer(customerId, accessTokenResponse)
+        customerDao.saveCustomer(customerCredential, customerId, accessTokenResponse)
     }
 
     override suspend fun accountVerified(itemId: String, accountId: String) {
@@ -42,10 +45,30 @@ class InsApplicationServiceImpl
             updateAccountAvailable(itemId)
         }
 
-        // verify with bigbrother.com
+        // get customer information
+        val customerItem = customerDao.getCustomerByItemId(itemId)
 
-        // TODO: stubbed with fake value for now
-        val isClean = bigBrotherService.verifyClean("lastname", "firstname", "city")
+        // validate
+        val customerId = customerItem?.let {
+            it.customerId
+        } ?: run {
+            log.info("customer with itemId $itemId doesn't exist")
+            return
+        }
+        val customerStatus = customerDao.getCustomerById(customerId) ?: run {
+            log.info("customer $customerId doesn't exist")
+            return
+        }
+
+        val lastname = customerStatus.lastName
+        val firstname = customerStatus.firstName
+        val city = customerStatus.city
+        requireNotNull(lastname) { "last name is null" }
+        requireNotNull(firstname) { "first name is null" }
+        requireNotNull(city) { "city is null" }
+
+        // verify with bigbrother.com
+        val isClean = bigBrotherService.verifyClean(lastname, firstname, city)
 
         if (isClean) {
             // update application status
