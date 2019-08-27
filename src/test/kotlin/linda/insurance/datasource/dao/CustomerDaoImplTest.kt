@@ -37,7 +37,7 @@ class CustomerDaoImplTest {
         // rule
         whenever(customerItemsRepository.findByItemId(testItemId)).thenReturn(customerItem)
 
-        whenever(customerStatusRepo.findByCustomerId(anyInt())).thenReturn(null)
+//        whenever(customerStatusRepo.findByCustomerId(anyInt())).thenReturn(null)
     }
 
     @Test

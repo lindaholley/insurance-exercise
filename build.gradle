@@ -54,7 +54,7 @@ springBoot {
 
 dependencies {
     implementation 'org.springframework.data:spring-data-releasetrain:Kay-SR14'
-    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:2.0.0'
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
