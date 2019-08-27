@@ -4,7 +4,7 @@ plaid:
   clientid: "5d2eaa07005af000125f307d"
   publickey: "c5f2d27962a2401407b5566385a512"
   secret: "98ef86bbda9e92e77c04fec6fe69b4"
-  username: 'ENC(JCEYZU19ojyLB51cENDXrtRak8JHhUSh)'
+  username: "user_good"
   password: "pass_good"
 
 bigbrother:
