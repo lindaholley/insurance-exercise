@@ -11,6 +11,7 @@ import linda.insurance.model.plaid.PlaidAccessTokenResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: CustomerStatusRepository,
@@ -37,6 +38,7 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
         log.info("saved customer item: $savedCustomerItem")
     }
 
+    @Transactional
     override fun accountVerified(itemId: String, accountId: String?) {
 
         // check existing

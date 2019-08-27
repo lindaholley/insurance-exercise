@@ -1,5 +1,7 @@
 package linda.insurance.controller
 
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import linda.insurance.model.CustomerCredential
 import linda.insurance.model.customer.CustomerInfo
@@ -51,7 +53,9 @@ class InsApplicationController @Autowired constructor(
                 log.warn("webhook fired error code")
             }
             WEBHOOK_VERIFIED -> {
-                insApplicationService.accountVerified(webhookRequest.item_id, webhookRequest.account_id)
+                launch {
+                    insApplicationService.accountVerified(webhookRequest.item_id, webhookRequest.account_id)
+                }
             }
             else -> {
                 log.warn("webhook fired unknown code")
