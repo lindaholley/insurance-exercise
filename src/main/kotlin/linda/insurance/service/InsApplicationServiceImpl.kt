@@ -80,7 +80,8 @@ class InsApplicationServiceImpl
             plaidService.getBalance(accessToken, accountId)
         }
 
-        val available = balanceResponse?.available
+        val account = balanceResponse?.accounts?.first()
+        val available = account?.balances?.available
         if (available != null) {
             return available > getPremium(PolicyTypes.TEN_YEAR.ordinal)
         }
