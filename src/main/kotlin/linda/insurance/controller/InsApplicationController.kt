@@ -28,7 +28,7 @@ class InsApplicationController @Autowired constructor(
     private val log = LoggerFactory.getLogger(InsApplicationController::class.java)
 
     @PostMapping("/create")
-    fun createApplication(@RequestBody customerCredential: CustomerCredential) = runBlocking {
+    suspend fun createApplication(@RequestBody customerCredential: CustomerCredential) {
 
         // validate customer credential
         require(customerCredential.firstName.isNotBlank())  { "createApplication(): first name is empty" }
