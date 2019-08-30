@@ -1,5 +1,7 @@
 package linda.insurance.service
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import linda.insurance.api.BigBrotherService
 import linda.insurance.api.PlaidService
 import linda.insurance.datasource.dao.CustomerDao
@@ -34,49 +36,49 @@ class InsApplicationServiceImpl
         customerDao.saveCustomer(customerCredential, customerId, accessTokenResponse)
     }
 
-    override suspend fun accountVerified(itemId: String, accountId: String) {
+    override fun accountVerified(itemId: String, accountId: String, scope: CoroutineScope) {
+        scope.launch {
+            updateAccountVerified(itemId, accountId)
 
-        updateAccountVerified(itemId, accountId)
+            // check account balance
+            val enoughBalance = checkBalance(itemId, accountId)
 
-        // check account balance
-        val enoughBalance = checkBalance(itemId, accountId)
+            if (enoughBalance) {
+                updateAccountAvailable(itemId)
+            }
 
-        if (enoughBalance) {
-            updateAccountAvailable(itemId)
+            // get customer information
+            val customerItem = customerDao.getCustomerByItemId(itemId)
+
+            // validate
+            val customerId = customerItem?.let {
+                it.customerId
+            } ?: run {
+                log.info("customer with itemId $itemId doesn't exist")
+                return@launch
+            }
+            val customerStatus = customerDao.getCustomerById(customerId) ?: run {
+                log.info("customer $customerId doesn't exist")
+                return@launch
+            }
+
+            val lastname = customerStatus.lastName
+            val firstname = customerStatus.firstName
+            val city = customerStatus.city
+            requireNotNull(lastname) { "last name is null" }
+            requireNotNull(firstname) { "first name is null" }
+            requireNotNull(city) { "city is null" }
+
+            // verify with bigbrother.com
+            val isClean = bigBrotherService.verifyClean(lastname, firstname, city)
+
+            if (isClean) {
+                // update application status
+                log.info("applicant is clean")
+            } else {
+                log.info("applicant has criminal record")
+            }
         }
-
-        // get customer information
-        val customerItem = customerDao.getCustomerByItemId(itemId)
-
-        // validate
-        val customerId = customerItem?.let {
-            it.customerId
-        } ?: run {
-            log.info("customer with itemId $itemId doesn't exist")
-            return
-        }
-        val customerStatus = customerDao.getCustomerById(customerId) ?: run {
-            log.info("customer $customerId doesn't exist")
-            return
-        }
-
-        val lastname = customerStatus.lastName
-        val firstname = customerStatus.firstName
-        val city = customerStatus.city
-        requireNotNull(lastname) { "last name is null" }
-        requireNotNull(firstname) { "first name is null" }
-        requireNotNull(city) { "city is null" }
-
-        // verify with bigbrother.com
-        val isClean = bigBrotherService.verifyClean(lastname, firstname, city)
-
-        if (isClean) {
-            // update application status
-            log.info("applicant is clean")
-        } else {
-            log.info("applicant has criminal record")
-        }
-
     }
 
     override suspend fun getCustomer(customerId: Int): CustomerInfo? {

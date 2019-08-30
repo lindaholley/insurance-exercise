@@ -1,5 +1,6 @@
 package linda.insurance.controller
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import kotlin.coroutines.coroutineContext
 
 @RestController
 class InsApplicationController @Autowired constructor(
@@ -44,7 +46,7 @@ class InsApplicationController @Autowired constructor(
     }
 
     @PostMapping("/update")
-    fun updateStatus(@RequestBody webhookRequest: PlaidWebhookRequest) = runBlocking {
+    suspend fun updateStatus(@RequestBody webhookRequest: PlaidWebhookRequest) {
 
         log.info("updateStatus called with $webhookRequest")
 
@@ -53,9 +55,7 @@ class InsApplicationController @Autowired constructor(
                 log.warn("webhook fired error code")
             }
             WEBHOOK_VERIFIED -> {
-                launch {
-                    insApplicationService.accountVerified(webhookRequest.item_id, webhookRequest.account_id)
-                }
+                insApplicationService.accountVerified(webhookRequest.item_id, webhookRequest.account_id, CoroutineScope(coroutineContext))
             }
             else -> {
                 log.warn("webhook fired unknown code")
