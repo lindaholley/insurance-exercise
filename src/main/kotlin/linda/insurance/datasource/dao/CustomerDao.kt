@@ -7,19 +7,19 @@ import linda.insurance.model.plaid.PlaidAccessTokenResponse
 
 interface CustomerDao {
 
-    fun saveCustomer(customerCredential: CustomerCredential,
+    suspend fun saveCustomer(customerCredential: CustomerCredential,
                      customerId: Int,
                      accessTokenResponse: PlaidAccessTokenResponse)
 
-    fun accountVerified(itemId: String, accountId: String?)
+    suspend fun accountVerified(itemId: String, accountId: String?)
 
-    fun accountAvailable(itemId: String)
+    suspend fun accountAvailable(itemId: String)
 
-    fun getAccessToken(itemId: String): String?
+    suspend fun getAccessToken(itemId: String): String?
 
-    fun getCustomerById(customerId: Int): CustomerStatus?
+    suspend fun getCustomerById(customerId: Int): CustomerStatus?
 
-    fun getItemByCustomerId(customerId: Int): CustomerItem?
+    suspend fun getItemByCustomerId(customerId: Int): CustomerItem?
 
-    fun getCustomerByItemId(itemId: String): CustomerItem?
+    suspend fun getCustomerByItemId(itemId: String): CustomerItem?
 }

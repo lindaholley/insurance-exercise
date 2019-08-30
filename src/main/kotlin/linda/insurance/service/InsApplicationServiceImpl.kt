@@ -79,7 +79,7 @@ class InsApplicationServiceImpl
 
     }
 
-    override fun getCustomer(customerId: Int): CustomerInfo? {
+    override suspend fun getCustomer(customerId: Int): CustomerInfo? {
         val customerStatus = customerDao.getCustomerById(customerId)
         val customerItem = customerDao.getItemByCustomerId(customerId)
 
@@ -111,11 +111,11 @@ class InsApplicationServiceImpl
         return false
     }
 
-    private fun updateAccountVerified(itemId: String, accountId: String) {
+    private suspend fun updateAccountVerified(itemId: String, accountId: String) {
         customerDao.accountVerified(itemId, accountId)
     }
 
-    private fun updateAccountAvailable(itemId: String) {
+    private suspend fun updateAccountAvailable(itemId: String) {
         customerDao.accountAvailable(itemId)
     }
 }

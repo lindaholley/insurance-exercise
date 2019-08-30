@@ -19,7 +19,7 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
     private val log = LoggerFactory.getLogger(CustomerDaoImpl::class.java)
 
-    override fun saveCustomer(customerCredential: CustomerCredential,
+    override suspend fun saveCustomer(customerCredential: CustomerCredential,
                               customerId: Int,
                               accessTokenResponse: PlaidAccessTokenResponse) {
         val savedCustomerStatus = customerStatusRepo.save(CustomerStatus(customerId = customerId,
@@ -39,7 +39,7 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
     }
 
     @Transactional
-    override fun accountVerified(itemId: String, accountId: String?) {
+    override suspend fun accountVerified(itemId: String, accountId: String?) {
 
         // check existing
         val customerItem = customerItemsRepo.findByItemId(itemId)
@@ -56,7 +56,7 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
         customerItem.itemStatus = PlaidItemStatus.VERIFIED.ordinal
         customerItem.accountId = accountId
-        customerItemsRepo.save(customerItem)
+        customerItemsRepo.update(customerItem)
 
         // get existing record of customer status
         val customerStatus = customerStatusRepo.findByCustomerId(customerItem.customerId)
@@ -69,28 +69,28 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
         }
     }
 
-    override fun accountAvailable(itemId: String) {
+    override suspend fun accountAvailable(itemId: String) {
         val customerItem = customerItemsRepo.findByItemId(itemId)
         customerItem?.let {
             it.itemStatus = PlaidItemStatus.AVAILABLE.ordinal
-            customerItemsRepo.save(customerItem)
+            customerItemsRepo.update(customerItem)
         }
     }
 
-    override fun getAccessToken(itemId: String): String? {
+    override suspend fun getAccessToken(itemId: String): String? {
         val customerItem = customerItemsRepo.findByItemId(itemId)
         return customerItem?.accessToken
     }
 
-    override fun getCustomerById(customerId: Int): CustomerStatus? {
+    override suspend fun getCustomerById(customerId: Int): CustomerStatus? {
         return customerStatusRepo.findByCustomerId(customerId)
     }
 
-    override fun getItemByCustomerId(customerId: Int): CustomerItem? {
+    override suspend fun getItemByCustomerId(customerId: Int): CustomerItem? {
         return customerItemsRepo.findByCustomerId(customerId)
     }
 
-    override fun getCustomerByItemId(itemId: String): CustomerItem? {
+    override suspend fun getCustomerByItemId(itemId: String): CustomerItem? {
         return customerItemsRepo.findByItemId(itemId)
     }
 }

@@ -8,5 +8,5 @@ interface InsApplicationService {
 
     suspend fun accountVerified(itemId: String, accountId: String)
 
-    fun getCustomer(customerId: Int): CustomerInfo?
+    suspend fun getCustomer(customerId: Int): CustomerInfo?
 }

@@ -67,14 +67,8 @@ class InsApplicationController @Autowired constructor(
      * For debugging purpose
      */
     @GetMapping("/customer/{customerId}")
-    fun getCustomer(@PathVariable customerId: Int): ResponseEntity<CustomerInfo> {
+    suspend fun getCustomer(@PathVariable customerId: Int): CustomerInfo? {
 
-        val customerInfo = insApplicationService.getCustomer(customerId)
-        return if (customerInfo != null) {
-            ResponseEntity.ok(customerInfo)
-        }
-        else {
-            ResponseEntity.notFound().build<CustomerInfo>()
-        }
+        return insApplicationService.getCustomer(customerId)
     }
 }

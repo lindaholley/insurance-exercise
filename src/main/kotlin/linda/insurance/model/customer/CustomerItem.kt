@@ -13,8 +13,8 @@ data class CustomerItem(
 
         @GeneratedValue(strategy = GenerationType.AUTO)
         @Id
-        @Column(name = "customer_items_id", nullable = false, updatable = false)
-        val customerItemsId: Int? = null,
+        @Column(name = "customer_item_id", nullable = false, updatable = false)
+        val customerItemId: Int? = null,
 
         @Column(name = "customer_id", nullable = false)
         val customerId: Int,
