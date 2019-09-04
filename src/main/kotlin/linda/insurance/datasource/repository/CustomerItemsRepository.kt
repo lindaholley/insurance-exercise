@@ -2,12 +2,11 @@ package linda.insurance.datasource.repository
 
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import linda.insurance.model.customer.CustomerItem
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
 import org.springframework.data.r2dbc.function.DatabaseClient
 
 @Repository
-class CustomerItemsRepository @Autowired constructor(private val client: DatabaseClient) {
+class CustomerItemsRepository (private val client: DatabaseClient) {
 
     suspend fun findByItemId(itemId: String): CustomerItem? =
             client.execute().sql("SELECT * FROM customer_item WHERE item_id = $1")
