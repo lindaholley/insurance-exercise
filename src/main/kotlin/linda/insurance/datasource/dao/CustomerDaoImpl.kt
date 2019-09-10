@@ -30,11 +30,12 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
         log.info("saved customer status: $savedCustomerStatus")
 
-        val savedCustomerItem = customerItemsRepo.save(CustomerItem(customerId = customerId,
+        customerItemsRepo.save(CustomerItem(customerId = customerId,
                 itemId = accessTokenResponse.itemId,
                 accessToken = accessTokenResponse.accessToken,
                 itemStatus = PlaidItemStatus.UNVERIFIED.ordinal))
 
+        val savedCustomerItem = customerItemsRepo.findByCustomerId(customerId)
         log.info("saved customer item: $savedCustomerItem")
     }
 

@@ -19,15 +19,15 @@ data class CustomerItem(
         @Column(name = "customer_id", nullable = false)
         val customerId: Int,
 
-        @Column(name = "item_id", nullable = false)
+        @Column(name = "item_id", nullable = false, updatable = true)
         val itemId: String,
 
-        @Column(name = "access_token", nullable = false)
+        @Column(name = "access_token", nullable = false, updatable = true)
         val accessToken: String,
 
-        @Column(name = "account_id")
+        @Column(name = "account_id", nullable = true, updatable = true)
         var accountId: String? = null,
 
-        @Column(name = "item_status", nullable = false)
+        @Column(name = "item_status", nullable = false, updatable = true)
         var itemStatus: Int
 )

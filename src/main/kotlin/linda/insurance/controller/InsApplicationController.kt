@@ -30,7 +30,7 @@ class InsApplicationController @Autowired constructor(
     private val log = LoggerFactory.getLogger(InsApplicationController::class.java)
 
     @PostMapping("/create")
-    suspend fun createApplication(@RequestBody customerCredential: CustomerCredential) {
+    fun createApplication(@RequestBody customerCredential: CustomerCredential) = runBlocking {
 
         // validate customer credential
         require(customerCredential.firstName.isNotBlank())  { "createApplication(): first name is empty" }
@@ -46,7 +46,7 @@ class InsApplicationController @Autowired constructor(
     }
 
     @PostMapping("/update")
-    suspend fun updateStatus(@RequestBody webhookRequest: PlaidWebhookRequest) {
+    fun updateStatus(@RequestBody webhookRequest: PlaidWebhookRequest) = runBlocking {
 
         log.info("updateStatus called with $webhookRequest")
 
@@ -67,8 +67,8 @@ class InsApplicationController @Autowired constructor(
      * For debugging purpose
      */
     @GetMapping("/customer/{customerId}")
-    suspend fun getCustomer(@PathVariable customerId: Int): CustomerInfo? {
+    fun getCustomer(@PathVariable customerId: Int): CustomerInfo? = runBlocking {
 
-        return insApplicationService.getCustomer(customerId)
+        return@runBlocking insApplicationService.getCustomer(customerId)
     }
 }

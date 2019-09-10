@@ -13,13 +13,13 @@ import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 @EnableR2dbcRepositories
 class DatastoreConfig : AbstractR2dbcConfiguration() {
     @Value("\${spring.datasource.username}")
-    private val userName: String = ""
+    private lateinit var userName: String
 
     @Value("\${spring.datasource.password}")
-    private val password: String = ""
+    private lateinit var password: String
 
     @Value("\${spring.datasource.dbname}")
-    private val dbName: String = ""
+    private lateinit var dbName: String
 
     @Bean
     override fun connectionFactory(): ConnectionFactory {

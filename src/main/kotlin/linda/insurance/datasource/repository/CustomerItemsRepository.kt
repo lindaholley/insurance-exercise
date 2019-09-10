@@ -4,6 +4,7 @@ import kotlinx.coroutines.reactive.awaitFirstOrNull
 import linda.insurance.model.customer.CustomerItem
 import org.springframework.stereotype.Repository
 import org.springframework.data.r2dbc.function.DatabaseClient
+import reactor.core.publisher.Mono
 
 @Repository
 class CustomerItemsRepository (private val client: DatabaseClient) {
@@ -37,8 +38,8 @@ class CustomerItemsRepository (private val client: DatabaseClient) {
 
 
     suspend fun save(customerItem: CustomerItem) =
-            client.execute().sql("INSERT INTO customer_item (customer_id, item_id, access_token, account_id, item_status) " +
-                    "VALUES(${customerItem.customerId}, ${customerItem.itemId}, ${customerItem.accessToken}, ${customerItem.accountId}, ${customerItem.itemStatus})")
+            client.insert().into(CustomerItem::class.java)
+                    .using(customerItem)
                     .then()
                     .awaitFirstOrNull()
 }
