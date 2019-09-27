@@ -4,7 +4,6 @@ import kotlinx.coroutines.reactive.awaitFirstOrNull
 import linda.insurance.model.customer.CustomerItem
 import org.springframework.stereotype.Repository
 import org.springframework.data.r2dbc.function.DatabaseClient
-import reactor.core.publisher.Mono
 
 @Repository
 class CustomerItemsRepository (private val client: DatabaseClient) {
