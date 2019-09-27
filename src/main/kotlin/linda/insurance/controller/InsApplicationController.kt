@@ -1,8 +1,5 @@
 package linda.insurance.controller
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import linda.insurance.model.CustomerCredential
 import linda.insurance.model.customer.CustomerInfo
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
-import kotlin.coroutines.coroutineContext
 
 @RestController
 class InsApplicationController @Autowired constructor(
@@ -55,7 +51,7 @@ class InsApplicationController @Autowired constructor(
                 log.warn("webhook fired error code")
             }
             WEBHOOK_VERIFIED -> {
-                insApplicationService.accountVerified(webhookRequest.item_id, webhookRequest.account_id, CoroutineScope(coroutineContext))
+                insApplicationService.accountVerified(webhookRequest.item_id, webhookRequest.account_id)
             }
             else -> {
                 log.warn("webhook fired unknown code")
@@ -67,8 +63,14 @@ class InsApplicationController @Autowired constructor(
      * For debugging purpose
      */
     @GetMapping("/customer/{customerId}")
-    fun getCustomer(@PathVariable customerId: Int): CustomerInfo? = runBlocking {
+    fun getCustomer(@PathVariable customerId: Int): ResponseEntity<CustomerInfo> {
 
-        return@runBlocking insApplicationService.getCustomer(customerId)
+        val customerInfo = insApplicationService.getCustomer(customerId)
+        return if (customerInfo != null) {
+            ResponseEntity.ok(customerInfo)
+        }
+        else {
+            ResponseEntity.notFound().build<CustomerInfo>()
+        }
     }
 }

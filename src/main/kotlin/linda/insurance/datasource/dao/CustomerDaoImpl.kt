@@ -11,7 +11,6 @@ import linda.insurance.model.plaid.PlaidAccessTokenResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
 class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: CustomerStatusRepository,
@@ -19,7 +18,7 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
     private val log = LoggerFactory.getLogger(CustomerDaoImpl::class.java)
 
-    override suspend fun saveCustomer(customerCredential: CustomerCredential,
+    override fun saveCustomer(customerCredential: CustomerCredential,
                               customerId: Int,
                               accessTokenResponse: PlaidAccessTokenResponse) {
         val savedCustomerStatus = customerStatusRepo.save(CustomerStatus(customerId = customerId,
@@ -30,17 +29,15 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
         log.info("saved customer status: $savedCustomerStatus")
 
-        customerItemsRepo.save(CustomerItem(customerId = customerId,
+        val savedCustomerItem = customerItemsRepo.save(CustomerItem(customerId = customerId,
                 itemId = accessTokenResponse.itemId,
                 accessToken = accessTokenResponse.accessToken,
                 itemStatus = PlaidItemStatus.UNVERIFIED.ordinal))
 
-        val savedCustomerItem = customerItemsRepo.findByCustomerId(customerId)
         log.info("saved customer item: $savedCustomerItem")
     }
 
-    @Transactional
-    override suspend fun accountVerified(itemId: String, accountId: String?) {
+    override fun accountVerified(itemId: String, accountId: String?) {
 
         // check existing
         val customerItem = customerItemsRepo.findByItemId(itemId)
@@ -57,7 +54,7 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
 
         customerItem.itemStatus = PlaidItemStatus.VERIFIED.ordinal
         customerItem.accountId = accountId
-        customerItemsRepo.update(customerItem)
+        customerItemsRepo.save(customerItem)
 
         // get existing record of customer status
         val customerStatus = customerStatusRepo.findByCustomerId(customerItem.customerId)
@@ -70,28 +67,28 @@ class CustomerDaoImpl @Autowired constructor(private val customerStatusRepo: Cus
         }
     }
 
-    override suspend fun accountAvailable(itemId: String) {
+    override fun accountAvailable(itemId: String) {
         val customerItem = customerItemsRepo.findByItemId(itemId)
         customerItem?.let {
             it.itemStatus = PlaidItemStatus.AVAILABLE.ordinal
-            customerItemsRepo.update(customerItem)
+            customerItemsRepo.save(customerItem)
         }
     }
 
-    override suspend fun getAccessToken(itemId: String): String? {
+    override fun getAccessToken(itemId: String): String? {
         val customerItem = customerItemsRepo.findByItemId(itemId)
         return customerItem?.accessToken
     }
 
-    override suspend fun getCustomerById(customerId: Int): CustomerStatus? {
+    override fun getCustomerById(customerId: Int): CustomerStatus? {
         return customerStatusRepo.findByCustomerId(customerId)
     }
 
-    override suspend fun getItemByCustomerId(customerId: Int): CustomerItem? {
+    override fun getItemByCustomerId(customerId: Int): CustomerItem? {
         return customerItemsRepo.findByCustomerId(customerId)
     }
 
-    override suspend fun getCustomerByItemId(itemId: String): CustomerItem? {
+    override fun getCustomerByItemId(itemId: String): CustomerItem? {
         return customerItemsRepo.findByItemId(itemId)
     }
 }

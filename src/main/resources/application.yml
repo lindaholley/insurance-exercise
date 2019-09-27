@@ -10,10 +10,3 @@ plaid:
 bigbrother:
   host: localhost:8081
 
-spring:
-  datasource:
-    username: sa
-    url: jdbc:h2:mem:testdb
-    password:
-    dbname: testdb
-
